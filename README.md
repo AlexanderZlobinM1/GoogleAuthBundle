@@ -19,7 +19,7 @@ No Mautic user is auto-created.
 2. Run Mautic plugin discovery/install and clear cache.
 3. Open the Google Auth plugin tile.
 4. Set Google Client ID.
-5. Optionally set Hosted Domain, for example `sales-snap.com`.
+5. Optionally set Hosted Domain, for example `example.com`.
 6. Publish the plugin.
 
 The Google OAuth client must allow the Mautic login domain as a JavaScript origin.
