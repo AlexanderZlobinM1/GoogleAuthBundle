@@ -1,0 +1,48 @@
+<style>
+    .googleauth-notes {
+        align-items: flex-start;
+    }
+
+    .googleauth-notes__body {
+        display: block;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .googleauth-notes__label,
+    .googleauth-notes__value {
+        display: block;
+        width: 100%;
+    }
+
+    .googleauth-notes__label {
+        margin: 0 0 6px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .googleauth-notes__value {
+        box-sizing: border-box;
+        margin: 0 0 16px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.78);
+        border-radius: 4px;
+        color: #1f2933;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .googleauth-notes__value:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="alert alert-info googleauth-notes">
+    <div class="googleauth-notes__body">
+        <p class="googleauth-notes__label">{{ 'mautic.integration.googleauth.notes.origin'|trans }}</p>
+        <code class="googleauth-notes__value">{{ origin }}</code>
+        <p class="googleauth-notes__label">{{ 'mautic.integration.googleauth.notes.check_url'|trans }}</p>
+        <code class="googleauth-notes__value">{{ check_url }}</code>
+    </div>
+</div>

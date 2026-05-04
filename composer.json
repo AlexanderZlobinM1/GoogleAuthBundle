@@ -1,0 +1,20 @@
+{
+    "name": "sales-snap/mautic-google-auth-bundle",
+    "description": "Google sign-in plugin for Mautic users matched by email.",
+    "type": "mautic-plugin",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "MauticPlugin\\GoogleAuthBundle\\": ""
+        }
+    },
+    "extra": {
+        "install-directory-name": "GoogleAuthBundle"
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "mautic/core-lib": "^5.0 || ^6.0 || ^7.0"
+    }
+}
