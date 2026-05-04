@@ -3,7 +3,7 @@
 return [
     'name'        => 'Google Auth',
     'description' => 'Google sign-in for existing Mautic users matched by email.',
-    'version'     => '1.0.6',
+    'version'     => '1.0.7',
     'author'      => 'Sales Snap',
     'services'    => [
         'events' => [
