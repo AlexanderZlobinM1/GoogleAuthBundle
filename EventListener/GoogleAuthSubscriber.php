@@ -271,8 +271,7 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
 
         $style = $standalone ? '' : '<style>.googleauth-login-block{clear:both;margin:14px 0 0}.googleauth-sep{font-size:11px;color:#6b7280;text-align:center;margin:10px 0}.googleauth-login-block .googleauth-error{margin-top:8px;color:#b42318;font-size:12px}.googleauth-login-block .googleauth-loading{font-size:12px;color:#6b7280;text-align:center}</style>';
 
-        $script = '<script src="https://accounts.google.com/gsi/client" async defer></script>'.
-            '<script>(function(){'.
+        $script = '<script>(function(){'.
             'var clientId='.$this->js($integration->getClientId()).';'.
             'var hostedDomain='.$this->js($integration->getHostedDomain()).';'.
             'var nonce='.$this->js($nonce).';'.
@@ -281,10 +280,14 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
             'var inputId='.$this->js($inputId).';'.
             'var errorId='.$this->js($errorId).';'.
             'var unavailable='.$this->js($error).';'.
+            'var sdkSrc="https://accounts.google.com/gsi/client";'.
+            'var initialized=false;'.
             'function showError(message){var el=document.getElementById(errorId);if(el){el.textContent=message||unavailable;}}'.
             'function submitCredential(response){if(!response||!response.credential){showError(unavailable);return;}var input=document.getElementById(inputId);var form=document.getElementById(formId);if(!input||!form){showError(unavailable);return;}input.value=response.credential;form.submit();}'.
-            'function init(){if(!(window.google&&google.accounts&&google.accounts.id)){showError(unavailable);return;}var cfg={client_id:clientId,callback:submitCredential,nonce:nonce};if(hostedDomain){cfg.hosted_domain=hostedDomain;}google.accounts.id.initialize(cfg);var target=document.getElementById(buttonId);if(target){target.innerHTML="";google.accounts.id.renderButton(target,{theme:"outline",size:"large",type:"standard",shape:"rectangular",text:"signin_with",width:320});}}'.
-            'if(document.readyState==="complete"){init();}else{window.addEventListener("load",init,{once:true});}'.
+            'function hasGoogle(){return !!(window.google&&google.accounts&&google.accounts.id);}'.
+            'function init(){if(initialized){return true;}if(!hasGoogle()){return false;}try{var cfg={client_id:clientId,callback:submitCredential,nonce:nonce};if(hostedDomain){cfg.hosted_domain=hostedDomain;}google.accounts.id.initialize(cfg);var target=document.getElementById(buttonId);if(target){target.innerHTML="";google.accounts.id.renderButton(target,{theme:"outline",size:"large",type:"standard",shape:"rectangular",text:"signin_with",width:320});}initialized=true;return true;}catch(e){showError(unavailable);initialized=true;return true;}}'.
+            'function boot(){if(init()){return;}var done=false;function ready(){if(done){return;}if(init()){done=true;}}function fail(){if(!done){showError(unavailable);done=true;}}var script=document.querySelector("script[data-googleauth-gsi]")||document.querySelector("script[src^=\\""+sdkSrc+"\\"]");if(script){script.addEventListener("load",ready,{once:true});script.addEventListener("error",fail,{once:true});}else{script=document.createElement("script");script.src=sdkSrc;script.async=true;script.defer=true;script.setAttribute("data-googleauth-gsi","1");script.onload=ready;script.onerror=fail;(document.head||document.documentElement).appendChild(script);}var attempts=0;var timer=window.setInterval(function(){attempts++;if(init()){window.clearInterval(timer);done=true;}else if(attempts>=60){window.clearInterval(timer);fail();}},250);}'.
+            'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",boot,{once:true});}else{boot();}'.
             '}());</script>';
 
         return $style.
