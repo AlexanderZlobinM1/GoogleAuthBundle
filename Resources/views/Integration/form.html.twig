@@ -23,8 +23,8 @@
 
     .googleauth-notes__value {
         box-sizing: border-box;
-        margin: 0 0 16px;
-        padding: 10px 12px;
+        margin: 0;
+        padding: 10px 112px 10px 12px;
         background: rgba(255, 255, 255, 0.78);
         border-radius: 4px;
         color: #1f2933;
@@ -33,8 +33,38 @@
         white-space: normal;
     }
 
-    .googleauth-notes__value:last-child {
+    .googleauth-notes__copy-row {
+        display: block;
+        margin: 0 0 16px;
+        position: relative;
+        width: 100%;
+    }
+
+    .googleauth-notes__copy-row:last-child {
         margin-bottom: 0;
+    }
+
+    .googleauth-notes__copy {
+        background: #fff;
+        border: 1px solid rgba(31, 41, 51, 0.22);
+        border-radius: 4px;
+        color: #1f2933;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        min-width: 76px;
+        padding: 6px 8px;
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        white-space: nowrap;
+    }
+
+    .googleauth-notes__copy:hover,
+    .googleauth-notes__copy:focus {
+        border-color: rgba(31, 41, 51, 0.45);
+        color: #111827;
     }
 
     .googleauth-settings-copyright {
@@ -55,10 +85,68 @@
 <div class="alert alert-info googleauth-notes">
     <div class="googleauth-notes__body">
         <p class="googleauth-notes__label">{{ 'mautic.integration.googleauth.notes.origin'|trans }}</p>
-        <code class="googleauth-notes__value">{{ origin }}</code>
+        <div class="googleauth-notes__copy-row">
+            <code id="googleauth-origin-value" class="googleauth-notes__value">{{ origin }}</code>
+            <button type="button" class="googleauth-notes__copy" data-googleauth-copy="googleauth-origin-value" data-copy-label="{{ 'mautic.integration.googleauth.notes.copy'|trans|e('html_attr') }}" data-copied-label="{{ 'mautic.integration.googleauth.notes.copied'|trans|e('html_attr') }}">{{ 'mautic.integration.googleauth.notes.copy'|trans }}</button>
+        </div>
         <p class="googleauth-notes__label">{{ 'mautic.integration.googleauth.notes.check_url'|trans }}</p>
-        <code class="googleauth-notes__value">{{ check_url }}</code>
+        <div class="googleauth-notes__copy-row">
+            <code id="googleauth-check-url-value" class="googleauth-notes__value">{{ check_url }}</code>
+            <button type="button" class="googleauth-notes__copy" data-googleauth-copy="googleauth-check-url-value" data-copy-label="{{ 'mautic.integration.googleauth.notes.copy'|trans|e('html_attr') }}" data-copied-label="{{ 'mautic.integration.googleauth.notes.copied'|trans|e('html_attr') }}">{{ 'mautic.integration.googleauth.notes.copy'|trans }}</button>
+        </div>
     </div>
 </div>
 
 <span class="googleauth-settings-copyright">Copyright <a href="https://sales-snap.com" target="_blank" rel="noopener noreferrer">Sales-snap.com</a> 2026</span>
+<script>
+    (function () {
+        var buttons = document.querySelectorAll('[data-googleauth-copy]');
+
+        function fallbackCopy(value) {
+            var textarea = document.createElement('textarea');
+            textarea.value = value;
+            textarea.setAttribute('readonly', 'readonly');
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                document.execCommand('copy');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function copyText(value) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(value).catch(function () {
+                    fallbackCopy(value);
+                });
+            }
+
+            fallbackCopy(value);
+
+            return Promise.resolve();
+        }
+
+        Array.prototype.forEach.call(buttons, function (button) {
+            button.addEventListener('click', function () {
+                var target = document.getElementById(button.getAttribute('data-googleauth-copy'));
+                var copyLabel = button.getAttribute('data-copy-label') || button.textContent;
+                var copiedLabel = button.getAttribute('data-copied-label') || 'Copied';
+
+                if (!target) {
+                    return;
+                }
+
+                copyText(target.textContent.trim()).then(function () {
+                    button.textContent = copiedLabel;
+                    window.setTimeout(function () {
+                        button.textContent = copyLabel;
+                    }, 1200);
+                });
+            });
+        });
+    })();
+</script>
