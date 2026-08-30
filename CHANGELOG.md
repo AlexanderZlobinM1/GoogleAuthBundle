@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.13 - 2026-08-30
+
+- Added Serbian Latin (`sr_RS`) translations for the Google Auth plugin.
+
 ## 1.0.12 - 2026-08-30
 
 - Clarified the Google Cloud Console setup for the OAuth consent screen,
