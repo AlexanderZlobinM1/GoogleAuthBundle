@@ -20,7 +20,9 @@ No Mautic user is auto-created.
 3. Open the Google Auth plugin tile.
 4. Set Google Client ID.
 5. Optionally set Hosted Domain, for example `example.com`.
-6. Publish the plugin.
+6. Leave **Show official Google button on login page** enabled unless you
+   intentionally want to hide the button.
+7. Publish the plugin by enabling **Active** in the tile and save.
 
 The Google OAuth client must allow the Mautic login domain as a JavaScript origin.
 
@@ -31,18 +33,28 @@ Mautic server. It does not use OAuth access tokens, refresh tokens, or a client
 secret. The only value you need to copy into Mautic is the Web application
 Client ID.
 
-### Create or find the OAuth client
+### Configure the OAuth consent screen
 
 1. Open Google Cloud Console:
    [Google Auth Platform clients](https://console.cloud.google.com/auth/clients).
 2. Select the Google Cloud project used for this Mautic installation, or create
    a new project.
-3. If the project has no OAuth branding yet, open
-   [Branding](https://console.cloud.google.com/auth/branding) and fill in the
-   required app name, support email, and authorized domains.
-4. Open **Clients** and create a client, or open an existing one.
-5. Set **Application type** to **Web application**.
-6. In **Authorized JavaScript origins**, add the public origin of your Mautic
+3. Open [Branding](https://console.cloud.google.com/auth/branding), which is
+   the current Google Cloud Console location for the OAuth consent screen.
+4. Fill in the app name and support email. Select the audience required by your
+   organization. If the app is **External** and remains in testing, add the
+   Google accounts that are allowed to test it.
+5. Add the domain used by Mautic to **Authorized domains**. Use the registrable
+   domain, for example `example.com`, not a URL, path, port, or wildcard. The
+   domain may need to be verified in Google Search Console before Google lets
+   you save it.
+
+### Create or find the OAuth client
+
+1. Open **Clients** in Google Auth Platform and create a client, or open an
+   existing one.
+2. Set **Application type** to **Web application**.
+3. In **Authorized JavaScript origins**, add the public origin of your Mautic
    instance. Use only scheme and host, without a path:
 
    ```text
@@ -52,11 +64,12 @@ Client ID.
    Do not add `/s/login`, `/s/sso_login_check/GoogleAuth`, query strings, or
    fragments to the JavaScript origin.
 
-7. **Authorized redirect URIs** are not required for the default plugin flow.
-   The plugin uses the Google browser callback and posts the ID token to
-   Mautic. Add redirect URIs only if you change the implementation to a redirect
-   based OAuth flow.
-8. Save the client.
+4. **Authorized redirect URIs** are not required for this plugin's default
+   Google Identity Services flow. Google returns the ID token to the browser,
+   and the browser POSTs it to the Mautic callback shown in the plugin tile.
+   That Mautic callback is an internal token endpoint, not a Google OAuth
+   redirect URI. Do not add it to the redirect URI list for this flow.
+5. Save the client.
 
 ### Copy the value into Mautic
 
@@ -67,14 +80,18 @@ Client ID.
    1234567890-abcdef.apps.googleusercontent.com
    ```
 
-2. In Mautic, open **Settings -> Plugins -> Google Auth**.
-3. Paste the value into **Google Client ID**.
-4. Optional: set **Hosted domain** to a Google Workspace domain, for example
+2. Google may also display a **Client Secret** or include it in a downloaded
+   OAuth client JSON file. This plugin does not use an OAuth client secret:
+   it verifies the signed ID token on the Mautic server. Do not paste the
+   secret into Mautic, commit it, or place it in the plugin configuration.
+3. In Mautic, open **Settings -> Plugins -> Google Auth**.
+4. Paste the value into **Google Client ID**.
+5. Optional: set **Hosted domain** to a Google Workspace domain, for example
    `example.com`. Leave it empty to allow any verified Google account whose
    email matches an existing Mautic user.
-5. Keep **Show official Google button on login page** enabled.
-6. Publish the plugin and save.
-7. Clear Mautic cache if the login page still shows old settings.
+6. Keep **Show official Google button on login page** enabled.
+7. Enable **Active**, publish the plugin, and save.
+8. Clear Mautic cache if the login page still shows old settings.
 
 ### What happens with tokens
 
@@ -87,8 +104,9 @@ Client ID.
 - If the Google email equals an existing Mautic user email, that user is signed
   in.
 
-You do not need to copy any Google token into Mautic. You also do not need to
-store the downloaded JSON file's `client_secret` in this plugin.
+You do not need to copy any Google token into Mautic. The downloaded JSON file
+is useful as a record of the client, but its `client_secret` is not used by this
+plugin and must be kept out of Mautic configuration.
 
 ### Troubleshooting
 
