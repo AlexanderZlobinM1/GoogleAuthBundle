@@ -1,9 +1,11 @@
 <?php
 
+$mauticMajor = (int) (new \Mautic\CoreBundle\Helper\AppVersion())->getVersion();
+
 return [
     'name'        => 'Google Auth',
     'description' => 'Google sign-in for existing Mautic users matched by email.',
-    'version'     => '1.0.13',
+    'version'     => '1.0.14',
     'author'      => 'Sales Snap',
     'services'    => [
         'events' => [
@@ -25,11 +27,12 @@ return [
                     'event_dispatcher',
                     'mautic.helper.cache_storage',
                     'doctrine.orm.entity_manager',
+                    ...($mauticMajor < 6 ? ['session'] : []),
                     'request_stack',
                     'router',
                     'translator',
                     'logger',
-                    'mautic.helper.encryption',
+                    'googleauthbundle.helper.encryption',
                     'mautic.lead.model.lead',
                     'mautic.lead.model.company',
                     'mautic.helper.paths',
@@ -37,7 +40,7 @@ return [
                     'mautic.lead.model.field',
                     'mautic.plugin.model.integration_entity',
                     'mautic.lead.model.dnc',
-                    'mautic.lead.field.fields_with_unique_identifier',
+                    ...($mauticMajor >= 6 ? ['mautic.lead.field.fields_with_unique_identifier'] : []),
                 ],
             ],
         ],

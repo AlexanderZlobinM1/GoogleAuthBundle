@@ -22,6 +22,9 @@ return function (ContainerConfigurator $configurator): void {
         'Translations',
     ];
 
+    // Legacy config.php treats FQCN arguments as strings, not service references.
+    $services->alias('googleauthbundle.helper.encryption', \Mautic\CoreBundle\Helper\EncryptionHelper::class);
+
     $services->load('MauticPlugin\\GoogleAuthBundle\\', '../')
         ->exclude('../{'.implode(',', array_merge(MauticCoreExtension::DEFAULT_EXCLUDES, $excludes)).'}');
 };
