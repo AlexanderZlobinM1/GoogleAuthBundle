@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.15 — Candidate
+## 1.0.15 — 2026-11-25
 
 - Mark the Google alternative login button with the shared Mautic auth-button
   contract so it can coexist with Passkey, Mail.ru and Yandex buttons.

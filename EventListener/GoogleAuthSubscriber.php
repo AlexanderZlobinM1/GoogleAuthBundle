@@ -274,7 +274,13 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
         $buttonClass = 'googleauth-loading'.(!$standalone ? ' mautic-auth-alternative-button' : '');
         $buttonMarker = !$standalone ? ' data-mautic-auth-alternative="1"' : '';
         $blockMarker = !$standalone ? ' data-mautic-auth-alternative-block="1" data-mautic-auth-separator-label="'.$this->e($separator).'"' : '';
-        $coordinator = $standalone ? '' : $this->renderAlternativeCoordinator($separator);
+        $coordinator = '';
+        if (!$standalone) {
+            $coordinator = file_get_contents(dirname(__DIR__).'/Resources/js/auth-alternative-coordinator.js');
+            if (false === $coordinator) {
+                throw new \RuntimeException('Google Auth alternative-login coordinator is missing.');
+            }
+        }
 
         $script = '<script>(function(){'.
             $coordinator.
@@ -305,34 +311,6 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
             '<input id="'.$this->e($inputId).'" type="hidden" name="credential" value="">'.
             '</form>'.
             '</div>'.$script;
-    }
-
-    private function renderAlternativeCoordinator(string $separator): string
-    {
-        return 'var separatorLabel='.$this->js($separator).';'.
-            'var coordinator=window.MauticAuthAlternativeCoordinator;'.
-            'if(!coordinator||typeof coordinator.register!=="function"){(function(){'.
-                'var state={label:"",observer:null,queued:false};'.
-                'function remove(node){if(node&&node.parentNode){node.parentNode.removeChild(node);}}'.
-                'function coordinate(){'.
-                    'state.queued=false;'.
-                    'var buttons=document.querySelectorAll("[data-mautic-auth-alternative=\\"1\\"]");'.
-                    'var blocks=document.querySelectorAll("[data-mautic-auth-alternative-block=\\"1\\"]");'.
-                    'var separators=document.querySelectorAll("[data-mautic-auth-alternative-separator=\\"1\\"]");'.
-                    'if(!buttons.length||!blocks.length){for(var emptyIndex=0;emptyIndex<separators.length;emptyIndex++){remove(separators[emptyIndex]);}return;}'.
-                    'var separatorNode=separators.length?separators[0]:document.createElement("div");'.
-                    'var topBlock=blocks[0];'.
-                    'var blockLabel=topBlock.getAttribute("data-mautic-auth-separator-label")||state.label;'.
-                    'if(!separators.length){separatorNode.className="mautic-auth-alternative-separator";separatorNode.setAttribute("data-mautic-auth-alternative-separator","1");separatorNode.textContent=blockLabel;}'.
-                    'else if(!separatorNode.textContent&&blockLabel){separatorNode.textContent=blockLabel;}'.
-                    'for(var duplicateIndex=1;duplicateIndex<separators.length;duplicateIndex++){remove(separators[duplicateIndex]);}'.
-                    'if(topBlock.parentNode&&(separatorNode.parentNode!==topBlock.parentNode||separatorNode.nextSibling!==topBlock)){topBlock.parentNode.insertBefore(separatorNode,topBlock);}'.
-                '}'.
-                'function schedule(){if(state.queued){return;}state.queued=true;window.setTimeout(coordinate,0);}'.
-                'function observe(){if(state.observer||!window.MutationObserver||!document.documentElement){return;}state.observer=new MutationObserver(schedule);state.observer.observe(document.documentElement,{childList:true,subtree:true});}'.
-                'window.MauticAuthAlternativeCoordinator={register:function(label){if(!state.label&&label){state.label=label;}observe();coordinate();},run:coordinate};'.
-            '}());coordinator=window.MauticAuthAlternativeCoordinator;}'.
-            'coordinator.register(separatorLabel);';
     }
 
     private function removeStandardSsoLink(string $content): string

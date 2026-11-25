@@ -6,6 +6,11 @@ $source = file_get_contents(dirname(__DIR__).'/EventListener/GoogleAuthSubscribe
 if (false === $source) {
     throw new RuntimeException('Unable to read Google Auth subscriber.');
 }
+$coordinator = file_get_contents(dirname(__DIR__).'/Resources/js/auth-alternative-coordinator.js');
+if (false === $coordinator) {
+    throw new RuntimeException('Unable to read shared alternative-auth coordinator.');
+}
+$source .= $coordinator;
 
 $required = [
     'shared alternative-login class'       => 'mautic-auth-alternative-button',
@@ -15,9 +20,9 @@ $required = [
     'shared separator class'               => 'mautic-auth-alternative-separator',
     'shared separator data marker'         => 'data-mautic-auth-alternative-separator="1"',
     'global coordinator'                   => 'MauticAuthAlternativeCoordinator',
-    'DOM-order top wrapper'                => 'var topBlock=blocks[0]',
-    'duplicate cleanup'                   => 'remove(separators[duplicateIndex])',
-    'separator relocation'                => 'insertBefore(separatorNode,topBlock)',
+    'DOM-order top wrapper'                => 'var topBlock    = blocks[0]',
+    'duplicate cleanup'                    => 'separators.forEach(function (candidate)',
+    'separator relocation'                 => 'insertBefore(separator, topBlock)',
     'repeat DOM initialization support'    => 'MutationObserver',
 ];
 
