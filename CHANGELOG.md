@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.15 — Candidate
+
+- Mark the Google alternative login button with the shared Mautic auth-button
+  contract so it can coexist with Passkey, Mail.ru and Yandex buttons.
+- Coordinate one translated separator before the topmost alternative button;
+  duplicate separators are removed after repeated or AJAX DOM initialization.
+- Add the separator translation to `en_US`, `ru` and `sr_RS`.
+
 ## 1.0.14 — 2026-09-06
 
 - Support Mautic 7.2 while retaining the declared older Mautic versions.

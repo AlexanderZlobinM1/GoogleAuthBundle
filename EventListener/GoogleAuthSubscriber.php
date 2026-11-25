@@ -268,10 +268,15 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
         $checkUrl = $this->router->generate('mautic_sso_login_check', ['integration' => GoogleAuthIntegration::NAME]);
         $loading  = $this->translator->trans('mautic.integration.googleauth.loading');
         $error    = $this->translator->trans('mautic.integration.googleauth.unavailable');
+        $separator = $this->translator->trans('mautic.integration.googleauth.login_separator');
 
-        $style = $standalone ? '' : '<style>.googleauth-login-block{clear:both;margin:14px 0 0}.googleauth-sep{font-size:11px;color:#6b7280;text-align:center;margin:10px 0}.googleauth-login-block .googleauth-error{margin-top:8px;color:#b42318;font-size:12px}.googleauth-login-block .googleauth-loading{font-size:12px;color:#6b7280;text-align:center}</style>';
+        $style = $standalone ? '' : '<style>.googleauth-login-block{clear:both;margin:14px 0 0}.mautic-auth-alternative-separator{font-size:11px;color:#6b7280;text-align:center;margin:10px 0}.googleauth-login-block .googleauth-error{margin-top:8px;color:#b42318;font-size:12px}.googleauth-login-block .googleauth-loading{font-size:12px;color:#6b7280;text-align:center}</style>';
+        $buttonClass = 'googleauth-loading'.(!$standalone ? ' mautic-auth-alternative-button' : '');
+        $buttonMarker = !$standalone ? ' data-mautic-auth-alternative="1"' : '';
+        $coordinator = $standalone ? '' : $this->renderAlternativeCoordinator($separator);
 
         $script = '<script>(function(){'.
+            $coordinator.
             'var clientId='.$this->js($integration->getClientId()).';'.
             'var hostedDomain='.$this->js($integration->getHostedDomain()).';'.
             'var nonce='.$this->js($nonce).';'.
@@ -292,13 +297,39 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
 
         return $style.
             '<div class="googleauth-login-block">'.
-            (!$standalone ? '<div class="googleauth-sep">or</div>' : '').
-            '<div id="'.$this->e($buttonId).'" class="googleauth-loading">'.$this->e($loading).'</div>'.
+            (!$standalone ? '<div class="mautic-auth-alternative-separator" data-mautic-auth-separator="1">'.$this->e($separator).'</div>' : '').
+            '<div id="'.$this->e($buttonId).'" class="'.$this->e($buttonClass).'"'.$buttonMarker.'>'.$this->e($loading).'</div>'.
             '<div id="'.$this->e($errorId).'" class="googleauth-error" aria-live="polite"></div>'.
             '<form id="'.$this->e($formId).'" method="post" action="'.$this->e($checkUrl).'" style="display:none">'.
             '<input id="'.$this->e($inputId).'" type="hidden" name="credential" value="">'.
             '</form>'.
             '</div>'.$script;
+    }
+
+    private function renderAlternativeCoordinator(string $separator): string
+    {
+        return 'var separatorLabel='.$this->js($separator).';'.
+            'var coordinator=window.MauticAuthAlternativeCoordinator;'.
+            'if(!coordinator||typeof coordinator.register!=="function"){(function(){'.
+                'var state={label:"",observer:null,queued:false};'.
+                'function remove(node){if(node&&node.parentNode){node.parentNode.removeChild(node);}}'.
+                'function coordinate(){'.
+                    'state.queued=false;'.
+                    'var buttons=document.querySelectorAll("[data-mautic-auth-alternative=\\"1\\"]");'.
+                    'var separators=document.querySelectorAll("[data-mautic-auth-separator=\\"1\\"]");'.
+                    'if(!buttons.length){for(var emptyIndex=0;emptyIndex<separators.length;emptyIndex++){remove(separators[emptyIndex]);}return;}'.
+                    'var separatorNode=separators.length?separators[0]:document.createElement("div");'.
+                    'if(!separators.length){separatorNode.className="mautic-auth-alternative-separator";separatorNode.setAttribute("data-mautic-auth-separator","1");separatorNode.textContent=state.label;}'.
+                    'else if(!separatorNode.textContent&&state.label){separatorNode.textContent=state.label;}'.
+                    'for(var duplicateIndex=1;duplicateIndex<separators.length;duplicateIndex++){remove(separators[duplicateIndex]);}'.
+                    'var topButton=buttons[0];'.
+                    'if(topButton.parentNode&&(separatorNode.parentNode!==topButton.parentNode||separatorNode.nextSibling!==topButton)){topButton.parentNode.insertBefore(separatorNode,topButton);}'.
+                '}'.
+                'function schedule(){if(state.queued){return;}state.queued=true;window.setTimeout(coordinate,0);}'.
+                'function observe(){if(state.observer||!window.MutationObserver||!document.documentElement){return;}state.observer=new MutationObserver(schedule);state.observer.observe(document.documentElement,{childList:true,subtree:true});}'.
+                'window.MauticAuthAlternativeCoordinator={register:function(label){if(!state.label&&label){state.label=label;}observe();coordinate();},run:coordinate};'.
+            '}());coordinator=window.MauticAuthAlternativeCoordinator;}'.
+            'coordinator.register(separatorLabel);';
     }
 
     private function removeStandardSsoLink(string $content): string
