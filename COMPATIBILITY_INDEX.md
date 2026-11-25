@@ -2,7 +2,7 @@
 
 Last synchronized from confirmed workspace evidence: 25 November 2026.
 
-Current release: `1.0.15` (candidate, `441e66b6d419`, separator contract change). Declared support: Mautic 5.x, 6.x, 7.x; PHP >=8.1.
+Current release: `1.0.15` (candidate, `2e1b826e4b2d`, separator contract change). Declared support: Mautic 5.x, 6.x, 7.x; PHP >=8.1.
 
 | Mautic | Status | Confirmed scope |
 | --- | --- | --- |
