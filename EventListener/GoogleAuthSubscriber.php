@@ -273,6 +273,7 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
         $style = $standalone ? '' : '<style>.googleauth-login-block{clear:both;margin:14px 0 0}.mautic-auth-alternative-separator{font-size:11px;color:#6b7280;text-align:center;margin:10px 0}.googleauth-login-block .googleauth-error{margin-top:8px;color:#b42318;font-size:12px}.googleauth-login-block .googleauth-loading{font-size:12px;color:#6b7280;text-align:center}</style>';
         $buttonClass = 'googleauth-loading'.(!$standalone ? ' mautic-auth-alternative-button' : '');
         $buttonMarker = !$standalone ? ' data-mautic-auth-alternative="1"' : '';
+        $blockMarker = !$standalone ? ' data-mautic-auth-alternative-block="1" data-mautic-auth-separator-label="'.$this->e($separator).'"' : '';
         $coordinator = $standalone ? '' : $this->renderAlternativeCoordinator($separator);
 
         $script = '<script>(function(){'.
@@ -296,8 +297,8 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
             '}());</script>';
 
         return $style.
-            '<div class="googleauth-login-block">'.
-            (!$standalone ? '<div class="mautic-auth-alternative-separator" data-mautic-auth-separator="1">'.$this->e($separator).'</div>' : '').
+            '<div class="googleauth-login-block"'.$blockMarker.'>'.
+            (!$standalone ? '<div class="mautic-auth-alternative-separator" data-mautic-auth-alternative-separator="1">'.$this->e($separator).'</div>' : '').
             '<div id="'.$this->e($buttonId).'" class="'.$this->e($buttonClass).'"'.$buttonMarker.'>'.$this->e($loading).'</div>'.
             '<div id="'.$this->e($errorId).'" class="googleauth-error" aria-live="polite"></div>'.
             '<form id="'.$this->e($formId).'" method="post" action="'.$this->e($checkUrl).'" style="display:none">'.
@@ -316,14 +317,16 @@ class GoogleAuthSubscriber implements EventSubscriberInterface
                 'function coordinate(){'.
                     'state.queued=false;'.
                     'var buttons=document.querySelectorAll("[data-mautic-auth-alternative=\\"1\\"]");'.
-                    'var separators=document.querySelectorAll("[data-mautic-auth-separator=\\"1\\"]");'.
-                    'if(!buttons.length){for(var emptyIndex=0;emptyIndex<separators.length;emptyIndex++){remove(separators[emptyIndex]);}return;}'.
+                    'var blocks=document.querySelectorAll("[data-mautic-auth-alternative-block=\\"1\\"]");'.
+                    'var separators=document.querySelectorAll("[data-mautic-auth-alternative-separator=\\"1\\"]");'.
+                    'if(!buttons.length||!blocks.length){for(var emptyIndex=0;emptyIndex<separators.length;emptyIndex++){remove(separators[emptyIndex]);}return;}'.
                     'var separatorNode=separators.length?separators[0]:document.createElement("div");'.
-                    'if(!separators.length){separatorNode.className="mautic-auth-alternative-separator";separatorNode.setAttribute("data-mautic-auth-separator","1");separatorNode.textContent=state.label;}'.
-                    'else if(!separatorNode.textContent&&state.label){separatorNode.textContent=state.label;}'.
+                    'var topBlock=blocks[0];'.
+                    'var blockLabel=topBlock.getAttribute("data-mautic-auth-separator-label")||state.label;'.
+                    'if(!separators.length){separatorNode.className="mautic-auth-alternative-separator";separatorNode.setAttribute("data-mautic-auth-alternative-separator","1");separatorNode.textContent=blockLabel;}'.
+                    'else if(!separatorNode.textContent&&blockLabel){separatorNode.textContent=blockLabel;}'.
                     'for(var duplicateIndex=1;duplicateIndex<separators.length;duplicateIndex++){remove(separators[duplicateIndex]);}'.
-                    'var topButton=buttons[0];'.
-                    'if(topButton.parentNode&&(separatorNode.parentNode!==topButton.parentNode||separatorNode.nextSibling!==topButton)){topButton.parentNode.insertBefore(separatorNode,topButton);}'.
+                    'if(topBlock.parentNode&&(separatorNode.parentNode!==topBlock.parentNode||separatorNode.nextSibling!==topBlock)){topBlock.parentNode.insertBefore(separatorNode,topBlock);}'.
                 '}'.
                 'function schedule(){if(state.queued){return;}state.queued=true;window.setTimeout(coordinate,0);}'.
                 'function observe(){if(state.observer||!window.MutationObserver||!document.documentElement){return;}state.observer=new MutationObserver(schedule);state.observer.observe(document.documentElement,{childList:true,subtree:true});}'.

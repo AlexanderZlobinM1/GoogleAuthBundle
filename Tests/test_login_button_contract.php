@@ -10,12 +10,14 @@ if (false === $source) {
 $required = [
     'shared alternative-login class'       => 'mautic-auth-alternative-button',
     'shared alternative-login data marker' => 'data-mautic-auth-alternative="1"',
+    'shared alternative-login wrapper'     => 'data-mautic-auth-alternative-block="1"',
+    'localized separator label'            => 'data-mautic-auth-separator-label=',
     'shared separator class'               => 'mautic-auth-alternative-separator',
-    'shared separator data marker'         => 'data-mautic-auth-separator="1"',
+    'shared separator data marker'         => 'data-mautic-auth-alternative-separator="1"',
     'global coordinator'                   => 'MauticAuthAlternativeCoordinator',
-    'DOM-order top button'                 => 'var topButton=buttons[0]',
+    'DOM-order top wrapper'                => 'var topBlock=blocks[0]',
     'duplicate cleanup'                   => 'remove(separators[duplicateIndex])',
-    'separator relocation'                => 'insertBefore(separatorNode,topButton)',
+    'separator relocation'                => 'insertBefore(separatorNode,topBlock)',
     'repeat DOM initialization support'    => 'MutationObserver',
 ];
 
@@ -25,7 +27,7 @@ foreach ($required as $name => $needle) {
     }
 }
 
-foreach (['googleauth-sep', '>or</div>'] as $forbidden) {
+foreach (['googleauth-sep', '>or</div>', 'data-mautic-auth-separator="1"'] as $forbidden) {
     if (str_contains($source, $forbidden)) {
         throw new RuntimeException('Google Auth still owns a local hard-coded separator: '.$forbidden);
     }

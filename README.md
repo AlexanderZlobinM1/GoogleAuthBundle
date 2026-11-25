@@ -27,9 +27,11 @@ No Mautic user is auto-created.
 The Google OAuth client must allow the Mautic login domain as a JavaScript origin.
 
 When other alternative login plugins are enabled, the Google button participates
-in the shared `mautic-auth-alternative-button` / `data-mautic-auth-alternative="1"`
-DOM contract. A single translated `or` separator is coordinated before the
-topmost alternative button; the standard Mautic login remains unchanged.
+in the shared `mautic-auth-alternative-button` /
+`data-mautic-auth-alternative="1"` DOM contract. Its wrapper is marked with
+`data-mautic-auth-alternative-block="1"` and carries the translated separator
+label. A singleton coordinator leaves one translated separator directly before
+the topmost alternative wrapper; the standard Mautic login remains unchanged.
 
 ## Google Cloud setup
 
