@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.16 — 2026-11-27
+
+- Add Packagist-ready Composer metadata and constrain installation to the
+  verified Mautic 5.2.x, 6.0.x, 7.1.x and 7.2.x branches.
+- Keep the release metadata and Composer package version aligned at `1.0.16`.
+
 ## 1.0.15 — 2026-11-25
 
 - Mark the Google alternative login button with the shared Mautic auth-button
@@ -7,8 +13,6 @@
 - Coordinate one translated separator before the topmost alternative button;
   duplicate separators are removed after repeated or AJAX DOM initialization.
 - Add the separator translation to `en_US`, `ru` and `sr_RS`.
-- Add Packagist-ready Composer metadata and constrain installation to the
-  verified Mautic 5.2.x, 6.0.x, 7.1.x and 7.2.x branches.
 
 ## 1.0.14 — 2026-09-06
 

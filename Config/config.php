@@ -5,7 +5,7 @@ $mauticMajor = (int) (new \Mautic\CoreBundle\Helper\AppVersion())->getVersion();
 return [
     'name'        => 'Google Auth',
     'description' => 'Google sign-in for existing Mautic users matched by email.',
-    'version'     => '1.0.15',
+    'version'     => '1.0.16',
     'author'      => 'Sales Snap',
     'services'    => [
         'events' => [
