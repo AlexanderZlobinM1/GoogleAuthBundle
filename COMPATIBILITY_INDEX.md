@@ -18,4 +18,10 @@ with one localized separator. It does not change the Google authentication
 protocol, services, storage or Mautic APIs; earlier compatibility evidence is
 inherited.
 
+Composer metadata is intentionally constrained to the verified Mautic minor
+branches `5.2.x`, `6.0.x`, `7.1.x` and `7.2.x` (`>=5.2 <5.3 || >=6.0 <6.1
+|| >=7.1 <7.3`). Exact checks are recorded on 5.2.10, 6.0.9, 7.1.3, 7.2.0
+and the shared separator acceptance on 7.2.1. It does not claim support for
+unverified 5.0/5.1, 6.1 or 7.0/7.3 versions through a broad constraint.
+
 Google OAuth/API exchange was not exercised. Update this file and the workspace `../../COMPATIBILITY_INDEX.md` row with every plugin-related change or review.

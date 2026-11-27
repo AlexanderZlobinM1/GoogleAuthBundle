@@ -1,6 +1,9 @@
 # Mautic compatibility
 
-Supported Mautic range remains 5.x, 6.x, 7.x.
+Composer-supported Mautic branches are intentionally limited to the verified
+minor branches `5.2.x`, `6.0.x`, `7.1.x` and `7.2.x`. Exact checks are recorded
+on `5.2.10`, `6.0.9`, `7.1.3`, `7.2.0` and the shared separator acceptance on
+`7.2.1`.
 
 Run against each supported Mautic installation with this plugin installed:
 
@@ -15,4 +18,7 @@ configured acceptance environment; a successful kernel test does not prove deliv
 
 ## Verified on 6 September 2026
 
-Fresh-kernel service instantiation and form construction/resolution passed on `7.2.0`, `7.1.3`, `6.0.9`, `5.2.10`. Mautic 5/6 used PHP 8.2.33; Mautic 7 used PHP 8.4.25. External delivery and OAuth/CAPTCHA provider exchanges were not exercised.
+Fresh-kernel service instantiation and form construction/resolution passed on
+`7.2.0`, `7.1.3`, `6.0.9`, `5.2.10`; the shared separator acceptance also
+passed on `7.2.1`. Mautic 5/6 used PHP 8.2.33; Mautic 7 used PHP 8.4.25.
+External delivery and OAuth/CAPTCHA provider exchanges were not exercised.
