@@ -13,16 +13,36 @@ The plugin authenticates only existing Mautic users. A Google login succeeds whe
 
 No Mautic user is auto-created.
 
-## Setup
+## Composer installation
 
-1. Install the bundle into `plugins/GoogleAuthBundle`.
-2. Run Mautic plugin discovery/install and clear cache.
-3. Open the Google Auth plugin tile.
-4. Set Google Client ID.
-5. Optionally set Hosted Domain, for example `example.com`.
-6. Leave **Show official Google button on login page** enabled unless you
+Run the commands from the Mautic project root, where the main `composer.json`
+is located:
+
+```bash
+composer require mautic/composer-plugin
+composer require sales-snap/mautic-google-auth-bundle:^1.0
+```
+
+The Mautic Composer plugin installs the bundle into `plugins/GoogleAuthBundle`.
+Composer selects the latest compatible stable release and rejects unsupported
+Mautic versions.
+
+After installing or updating the package, reload plugins and clear the Mautic
+cache:
+
+```bash
+php bin/console mautic:plugins:reload
+php bin/console cache:clear
+```
+
+Then:
+
+1. Open the Google Auth plugin tile.
+2. Set Google Client ID.
+3. Optionally set Hosted Domain, for example `example.com`.
+4. Leave **Show official Google button on login page** enabled unless you
    intentionally want to hide the button.
-7. Publish the plugin by enabling **Active** in the tile and save.
+5. Publish the plugin by enabling **Active** in the tile and save.
 
 The Google OAuth client must allow the Mautic login domain as a JavaScript origin.
 
